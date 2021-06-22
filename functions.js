@@ -12,10 +12,26 @@ const fishDesc = ["splendid", "heavy", "fat", "slimy", "cute", "ugly", "lovely",
 const fishType = ["catfish", "trout", "salmon", "chub", "pike", "bass", "sturgeon", "walleye", "perch", "minnow", "herring"];
 
 
+
 //Starting values for important objects & arrays
-let bucket = [];
+let bucket = [   {
+    color: 'yellow',
+    desc: 'shimmering',
+    type: 'bass',
+    value: '0.46',
+    weight: '0.96'
+  },
+  {
+    color: 'brown',
+    desc: 'squirmy',
+    type: 'sturgeon',
+    value: '0.92',
+    weight: '0.76'
+  }
+]
 let onRod = [];
 
+// console.log (bucket);
 
 //I have some questios about accessing a function without the () operator. As I understand it,
 //without any input there, this function will return the OBJECT I am creating - the new fish.
@@ -27,6 +43,8 @@ let onRod = [];
 //
 //TODO: need value & weight
 function createFish () {
+    //First we clear the rod, I might move this line to somewhere else in the program.
+    onRod = [];
     const newFish = {
         //I don't need to use a function here, but thought it would be fun to call a function
         //inside of another function. I could just copy over the random code into each line,
@@ -34,9 +52,9 @@ function createFish () {
         color : random_item(fishColors),
         desc : random_item(fishDesc),
         type : random_item(fishType),
-        value : randomCash(10),
-        weight : randomWeight(3),
-
+        //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
+        value : randomCash(1),
+        weight : randomWeight(1),
     }
     //This is a temporary storage place for the fish. I think from here the player will "keep",
     //meaning splice the onRod object into the bucket array; or, "throw back" where I will
@@ -45,8 +63,8 @@ function createFish () {
     return
 }
 
-createFish();
-console.log('This is what we caught...', onRod);
+// createFish();
+// console.log('This is what we caught...', onRod);
 
 
 //This function will pull a random element from a chosen array. I have an idea to use this
@@ -69,7 +87,8 @@ function random_item(items) {
 //chance will not always produce a fish. The line could break, for example, or they
 //could fish up a piece of junk.
 function randomWeight (a) {
-    let tempWeight = (((Math.random()*a) ) .toFixed(2));
+    //.toFixed here determines how many decimal places we want to output with the number.
+    tempWeight = (((Math.random()*a) ) .toFixed(2));
     //This is a simple function, but I wanted to add this if statement. I don't think
     //fish smaller than a certain number should be caught, both realistically and from
     //a gameplay standpoint. 10/18 = .55, meaning if a player caught all 18 potential
@@ -80,15 +99,20 @@ function randomWeight (a) {
     //Using a min value will force the player to make decisions about what to keep. I
     //plan to use different values for 'a', so some fish could be bigger or smaller.
     //Balancing this would be the hardest part, to keep it competitive.
-    if (tempWeight > 0.75) {
-        return tempWeight
-    }
-    else {
-        return randomWeight(a)
-    } 
+    // if (tempWeight > 0.75) {
+    //     return tempWeight
+    // }
+    // else {
+    //     return randomWeight(a)
+    // } 
+    
+    
+    return tempWeight > 0.75 ? tempWeight : randomWeight(a)
+    
+    
 }
 
-console.log('This is a random weight to test our function...', randomWeight(3), 'lbs');
+// console.log( 'Random weight to test our function, NOT the same as \"What we caught...\"', randomWeight(10), 'lbs' );
 
 
 //Basically the same function here as above. randomValue seemed confusing to me,
@@ -100,7 +124,7 @@ console.log('This is a random weight to test our function...', randomWeight(3), 
 //they want, no reason to further limit the min value or the max value.
 //
 //I could make certain high values less likely here, by adding in some new code. If
-// tempValue > 15, run another random roll, half the time they get the expensive fish
+//tempValue > 15, run another random roll, half the time they get the expensive fish
 //but half the time the value gets re-evaluated behind the scenes.
 //
 //Also, I'm not sure where in all of the code I should put this. If I wanted each fish
@@ -120,7 +144,9 @@ function randomCash (a) {
     } 
 }
 
-console.log('This is a random value/cash to test our function...', '$', randomCash(10));
+// console.log( 'Random cash value to test our function, NOT the same as \"What we caught...\"', '$', randomCash(10));
+
+
 
 //I would like to potentially add in a rarity system. I could create a data set for Bass,
 //where they are always 1-3lbs in weight and $0.50 - $2 in value. Bass would have a PPP 
@@ -130,4 +156,43 @@ console.log('This is a random value/cash to test our function...', '$', randomCa
 //
 //Likewise, any bass with a PPP < 0.619 would be in the bottom 25% of possible bass to catch.
 //A property would then be assigned to indicate this is a poor quality fish.
+//
+//Adding in custom value ranges for each fish will be easy I think. I can use the randomly
+//generated name value, as the input for my weight function, and have the weight function
+//contain all of the code for the value ranges for each fish.
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function lookBucket () {
+    //Starting values for this function
+    let sumFish = 0;
+    let sumWeight = 0;
+    let sumCash = 0;
+
+
+    //Sum of fish
+    for (let i=0; i<bucket.length; i++) {
+        sumFish++;
+        console.log (bucket[i].weight);
+        sumWeight += Number(bucket[i].weight);
+
+
+
+}
+
+
+
+    //Trivial case
+    return bucket.length === 0 ? console.log('Empty bucket') : 
+    console.log('\n', 'You currently have', sumFish, 'fish.', '\n',
+                      'New line.', sumWeight
+                      
+                      
+                      
+                      );
+}
+
+lookBucket();
