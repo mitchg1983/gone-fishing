@@ -27,27 +27,28 @@ const fishType = ["catfish", "trout", "salmon", "chub", "pike", "bass", "sturgeo
 let bucket = [];
 let onRod = [];
 let clock = 0;
+let time = '';
 
 
 
 //-------------FUNCTIONS---------------//
-function createFish () {
+// function createFish () {
 
-    //First we clear the rod, I might move this line to somewhere else in the program.
-    onRod = [];
-    const newFish = {
-        color : random_item(fishColors),
-        desc : random_item(fishDesc),
-        type : random_item(fishType),
-        
-        //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
-        value : randomCash(1),
-        weight : randomWeight(1),
-    }
-    //This is a temporary storage place for the fish, while player makes a decision.
-    onRod.push(newFish);
-    return
-}
+//     //First we clear the rod, I might move this line to somewhere else in the program.
+//     onRod = [];
+//     const newFish = {
+//         color : random_item(fishColors),
+//         desc : random_item(fishDesc),
+//         type : random_item(fishType),
+
+//         //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
+//         value : randomCash(1),
+//         weight : randomWeight(1),
+//     }
+//     //This is a temporary storage place for the fish, while player makes a decision.
+//     onRod.push(newFish);
+//     return
+// }
 
 // createFish();
 // console.log('This is what we caught...', onRod);
@@ -63,10 +64,10 @@ function random_item(items) {
 //chance will not always produce a fish. The line could break, for example, or they
 //could fish up a piece of junk.
 function randomWeight (a) {
-
+    
     //.toFixed here determines how many decimal places we want to output with the number.
     tempWeight = (((Math.random()*a) ) .toFixed(2));
-
+    
     //Fish smaller than a certain number should not be caught, both realistically and from
     //a gameplay standpoint. 10/18 = .55, meaning if a player caught all 18 potential
     //fish, as long as they all weighed .55 or less the player could keep all of them.
@@ -96,7 +97,7 @@ function randomWeight (a) {
 //bass or trout as the input.
 function randomCash (a) {
     let tempValue = (((Math.random()*a)).toFixed(2));
-
+    
     //This sets the min value for any fish caught.
     return tempValue > 0.25 ? tempValue : randomCash(a)
 }
@@ -119,32 +120,34 @@ function randomCash (a) {
 //contain all of the code for the value ranges for each fish.
 
 //This function will provide to the player, a summary of their catch so far today.
-function lookBucket () {
+// function lookBucket () {
 
-    //Starting values for this function
-    let sumFish = 0;
-    let sumWeight = 0;
-    let sumCash = 0;
-    
-    //Sum of fish
-    for (let i=0; i<bucket.length; i++) {
-        sumFish++;
-        sumWeight += Number(bucket[i].weight);
-        sumCash += Number(bucket[i].value);
-    }
-    
-    //Trivial case and output to player
-    return bucket.length === 0 ? console.log('Your bucket is empty, go catch some fish!') : 
-    console.log('\n', 'You currently have', sumFish.toString(), 'fish.', '\n',
-                'Your bucket weighs', sumWeight.toFixed(2),'lbs.', '\n',
-                'This haul is worth $', sumCash.toFixed(2), 'back in town.'
-               );
-}
+//     //Starting values for this function
+//     let sumFish = 0;
+//     let sumWeight = 0;
+//     let sumCash = 0;
+
+//     //Sum of fish
+//     for (let i=0; i<bucket.length; i++) {
+//         sumFish++;
+//         sumWeight += Number(bucket[i].weight);
+//         sumCash += Number(bucket[i].value);
+//     }
+
+//     //Trivial case and output to player
+//     return bucket.length === 0 ? console.log('Your bucket is empty, go catch some fish!') : 
+//     console.log('\n', 'You currently have', sumFish.toString(), 'fish.', '\n',
+//     'Your bucket weighs', sumWeight.toFixed(2),'lbs.', '\n',
+//     'This haul is worth $', sumCash.toFixed(2), 'back in town.'
+//     );
+// }
 
 //Function to move the clock, with a variable containing the # of minutes to advance.
 //Let's do the timewarp again
 function timeWarp (warpSpeed) {
-clock += warpSpeed;
+    clock += warpSpeed;
+    // console.log('The new clock value is', clock);
+    checkWatch();
     return 
 }
 
@@ -154,13 +157,18 @@ clock += warpSpeed;
 //It is easier to do this than convert afternoon times, 13 -> 1, 14 -> 2 ...
 //Also I use the 24 clock for everything anyways so it makes sense to me.
 function checkWatch () {
-let hours = Math.floor(clock / 60)
-let minutes = clock % 60;
-
+    let hours = Math.floor(clock / 60)
+    let minutes = clock % 60;
+    
     //I used padStart here to append the hours for the 24hr clock. Numbers are output to
     //terminal in yellow which stands out visually; I converted these values to strings
     //for consistency with the rest of my program.
-    return console.log('\n', 'It is', String(hours).padStart(2,'0'), ':', String(minutes).padStart(2,'0'));
+    //
+    //I had a '+' in here for the longest time instead of .concat; from before I converted
+    //these into strings. PAY ATTENTION!
+    time = ((String(hours).padStart(2,'0')).concat(':').concat((String(minutes).padStart(2,'0'))).toString());
+    
+    return;
 }
 
 //
@@ -168,13 +176,14 @@ let minutes = clock % 60;
 //
 
 //Opening splash screen for player.
+
 console.clear ();
 console.log('Welcome to',
-             '\n',  '\n', '\n', '\n', 
-            '   Reel Out: Big Bass American Fishing Challenge 2021 - the Terminal Edition',
-            '\n', '\n', 
-            '                       "Where any fin is possible"', 
-            '\n', '\n', '\n',);
+'\n',  '\n', '\n', '\n', 
+'   Reel Out: Big Bass American Fishing Challenge 2021 - the Terminal Edition',
+'\n', '\n', 
+'                       "Where any fin is possible"', 
+'\n', '\n', '\n',);
 console.log('Press ENTER to START!');
 prompt ('>');
 
@@ -187,6 +196,62 @@ console.clear ();
 timeWarp(360);
 
 console.log('~~~~~~~ REEL OUT! ~~~~~~~',
-            '\n',
-            '\n',);
-checkWatch();
+'\n',
+'\n',);
+console.log( 'It is currently', time);
+
+
+
+
+
+
+//I thought it would be interesting to try and store some of my functions inside of an object, and then call them
+//as needed. Not sure if this is easier/helpful, but I wanted to stay away from as many loops as possible.
+const choices = {
+    
+
+    //Look inside the bucket, give sums to player
+    bucket: function () {
+        
+        //Starting values for this function
+        let sumFish = 0;
+        let sumWeight = 0;
+        let sumCash = 0;
+        
+        //Sum of fish
+        for (let i=0; i<bucket.length; i++) {
+            sumFish++;
+            sumWeight += Number(bucket[i].weight);
+            sumCash += Number(bucket[i].value);
+        }
+        
+        //Trivial case and output to player
+        return bucket.length === 0 ? console.log('Your bucket is empty, go catch some fish!') : 
+        console.log('\n', 'You currently have', sumFish.toString(), 'fish.', '\n',
+        'Your bucket weighs', sumWeight.toFixed(2),'lbs.', '\n',
+        'This haul is worth $', sumCash.toFixed(2), 'back in town.');
+    },
+    
+    //Create a new fish & place it on the player's fishing rod.
+    fish: function () {
+    
+        //First we clear the rod, I might move this line to somewhere else in the program.
+        onRod = [];
+        const newFish = {
+            color : random_item(fishColors),
+            desc : random_item(fishDesc),
+            type : random_item(fishType),
+            
+            //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
+            value : randomCash(1),
+            weight : randomWeight(1),
+        }
+        //This is a temporary storage place for the fish, while player makes a decision.
+        onRod.push(newFish);
+        return
+    }
+
+}
+console.log(onRod);
+choices.fish();
+console.log(onRod);
