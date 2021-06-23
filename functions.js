@@ -14,22 +14,28 @@ const fishType = ["catfish", "trout", "salmon", "chub", "pike", "bass", "sturgeo
 
 
 //Starting values for important objects & arrays
-let bucket = [   {
-    color: 'yellow',
-    desc: 'shimmering',
-    type: 'bass',
-    value: '0.46',
-    weight: '0.96'
-  },
-  {
-    color: 'brown',
-    desc: 'squirmy',
-    type: 'sturgeon',
-    value: '0.92',
-    weight: '0.76'
-  }
-]
+let bucket = [   
+    
+    {
+        color: 'yellow',
+        desc: 'shimmering',
+        type: 'bass',
+        value: '1.34',
+        weight: '0.97'
+    },
+    
+    {
+        color: 'brown',
+        desc: 'squirmy',
+        type: 'sturgeon',
+        value: '3.87',
+        weight: '2.45'
+    }
+    
+];
+
 let onRod = [];
+let clock = 0;
 
 // console.log (bucket);
 
@@ -53,8 +59,8 @@ function createFish () {
         desc : random_item(fishDesc),
         type : random_item(fishType),
         //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
-        value : randomCash(1),
-        weight : randomWeight(1),
+        value : randomCash(10),
+        weight : randomWeight(3),
     }
     //This is a temporary storage place for the fish. I think from here the player will "keep",
     //meaning splice the onRod object into the bucket array; or, "throw back" where I will
@@ -165,34 +171,53 @@ function randomCash (a) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-
+//This function will provide to the player, a summary of their catch so far today.
 function lookBucket () {
+
     //Starting values for this function
     let sumFish = 0;
     let sumWeight = 0;
     let sumCash = 0;
-
-
+    
     //Sum of fish
     for (let i=0; i<bucket.length; i++) {
         sumFish++;
-        console.log (bucket[i].weight);
         sumWeight += Number(bucket[i].weight);
-
-
-
-}
-
-
-
+        sumCash += Number(bucket[i].value);
+    }
+    
     //Trivial case
-    return bucket.length === 0 ? console.log('Empty bucket') : 
-    console.log('\n', 'You currently have', sumFish, 'fish.', '\n',
-                      'New line.', sumWeight
-                      
-                      
-                      
-                      );
+    return bucket.length === 0 ? console.log('Your bucket is empty, go catch some fish!') : 
+    console.log('\n', 'You currently have', sumFish.toString(), 'fish.', '\n',
+                'Your bucket weighs', sumWeight.toFixed(2),'lbs.', '\n',
+                'This haul is worth $', sumCash.toFixed(2), 'back in town.'
+               );
 }
 
 lookBucket();
+
+
+//Function to move the clock, with a variable containing the # of minutes to advance.
+//Let's do the timewarp again
+function timeWarp (warpSpeed) {
+clock += warpSpeed;
+    return 
+}
+
+timeWarp(100);
+
+//This function will convert the value in clock (minutes) to the 24hr clock standard.
+//It is easier to do this than convert afternoon times, 13 -> 1, 14 -> 2 ...
+//Also I use the 24 clock for everything anyways so it makes sense to me.
+function checkWatch () {
+let hours = Math.floor(clock / 60)
+let minutes = clock % 60;
+
+    //I used padStart here to append the hours for the 24hr clock. Numbers are output to
+    //terminal in yellow which stands out visually; I converted these values to strings
+    //for consistency with the rest of my program.
+    return console.log('\n', 'It is', String(hours).padStart(2,'0'), ':', minutes.toString())
+}
+
+checkWatch ();
+
