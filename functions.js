@@ -221,3 +221,25 @@ let minutes = clock % 60;
 
 checkWatch ();
 
+//pasted on jun 23 720PM
+////-------------FUNCTIONS---------------//
+// function createFish () {
+
+//     //First we clear the rod, I might move this line to somewhere else in the program.
+//     onRod = [];
+//     const newFish = {
+//         color : random_item(fishColors),
+//         desc : random_item(fishDesc),
+//         type : random_item(fishType),
+
+//         //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
+//         value : randomCash(1),
+//         weight : randomWeight(1),
+//     }
+//     //This is a temporary storage place for the fish, while player makes a decision.
+//     onRod.push(newFish);
+//     return
+// }
+
+// createFish();
+// console.log('This is what we caught...', onRod);

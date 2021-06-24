@@ -270,8 +270,8 @@ console.log(
                             type : random_item(fishType),
                             
                             //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
-                            value : randomCash(3),
-                            weight : randomWeight(5),
+                            value : randomCash(5),
+                            weight : randomWeight(2),
                         }
                         //This is a temporary storage place for the fish, while player makes a decision.
                         onRod.push(newFish);
@@ -279,7 +279,12 @@ console.log(
                             '\n',    
                             'You feel a bite and pull in your catch...',
                             '\n',
-                            '   You caught a', newFish.color, newFish.type, ',', 'it looks', newFish.desc, 'and hangs from your hook.',
+                            '\n',
+                            '   You caught a', newFish.color, newFish.type, ',', 'it looks', newFish.desc, 'and wriggles on your hook.',
+                            '\n',
+                            '   Based on your many years of exeperience you can estimate:',
+                            '\n',
+                            '   This fish weighs', newFish.weight, 'lbs, and is worth $', newFish.value,    
                             '\n',
                             '\n',
                             'Would you like to keep the fish?',
@@ -335,11 +340,11 @@ console.log(
                             }
                             
                             let testA = sumWeight + Number(a.weight);
-                            console.log(sumWeight);
-                            console.log(a.Weight);
+                            // console.log(sumWeight);
+                            // console.log(a.Weight);
                             
-                            console.log('Your testA weight is', testA);
-                            prompt('>');
+                            // console.log('Your testA weight is', testA);
+                            // prompt('>');
                             
                             return ( testA < 10) ? bucket.push(a) : choices.thisThat(a);
                         },
@@ -355,9 +360,20 @@ console.log(
                             let sumWeight = 0;
                             for (let i=0; i<bucket.length; i++) {
                                 sumWeight += Number(bucket[i].weight);}
-                                if (a.type === 'N/A') {
-                                    bucket.splice(bucket.length - 1, 1)
+                                
+                                //These two statements handle the case where a player chose to throw a fish back in the river,
+                                //but it was not heavy enough to bring the bucket under the max weight. I feed a blank object
+                                //back into this function, which these statements will recognize as meaning "not the first time"
+                                //this function has been run. They will remove this 'blank' object from the bucket, and either
+                                //return the function, or put the user back into the UI where they remove a fish from the 
+                                //bucket.
+                                if (a.type === 'N/A' && sumWeight < 10) {
+                                    bucket.splice(bucket.length - 1, 1);
                                     return};
+                                    
+                                    if (a.type === 'N/A' && sumWeight > 10) {
+                                        bucket.splice(bucket.length - 1, 1);
+                                    };
                                     
                                     console.log(
                                         'Your bucket is too heavy, choose a fish throw out.',
@@ -372,88 +388,113 @@ console.log(
                                             
                                             for (let i=0; i<bucket.length; i++) {
                                                 console.log('#', i + 1, '...', bucket[i].type, '...$', bucket[i].value, '...#', bucket[i].weight)};
-                                            
-                                            console.log(                                                
-                                                '\n',
-                                                '\n',
-                                                'Enter the #number of the fish you will throw back into the river.');
-                                                let input = prompt('>');
-                                                bucket.splice(Number(input - 1), 1);
                                                 
-                                                
-                                                return choices.thisThat({type:'N/A',value:0,weight:0})
-                                            }
-                                            
-                                            
-                                        }//End of choices
-                                        
-                                        //BEGINNING OF MAIN CODE
-                                        
-                                        
-                                        //Clear the player's input from the previous loop.
-                                        playerInput = '';
-                                        
-                                        //The program will check if we have a name for the player, if not it will prompt an input.
-                                        name === 'player' ? getName():'';
-                                        
-                                        
-                                        console.clear();
-                                        //This is the basic UI for the player.
-                                        console.log('          ~~~~~~~~~~ REEL OUT! ~~~~~~~~~');
-                                        console.log('          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-                                        console.log( 
-                                            '\n',
-                                            'It is currently', time, 'and a gorgeous sunny day outside.',
-                                            '\n',
-                                            '\n',
-                                            'What would you like to do', name, '?',
-                                            '\n',
-                                            '\n',
-                                            'Commands -',
-                                            '\n',
-                                            ' -Cast your line into the river. [cast]',
-                                            '\n',
-                                            ' -Review your catch. [bucket]',
-                                            '\n',
-                                            '\n',
-                                            ' -Quit game. [quit]',
-                                            );
-                                            
-                                            
-                                            console.log('Type in a command...', '\n');
-                                            
-                                            //I want to use the player input, as the input to call a function. I needed to convert the input to lower case
-                                            //if the player inputs any capital letters.
-                                            // playerInput = ( (prompt ('>')).toLowerCase() );
-                                            checkAction( ( (prompt ('>')).toLowerCase() ) );
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            //Late stage add here, had a crash if this input did not match one of the key:values of {choices}
-                                            function checkAction (a) {
-                                                let aA = 0;
-                                                
-                                                //Go through each property in choices, if playerinput matches any of these, add 1 to aA. If aA is still at
-                                                //value 0 when this loop is finished, it means that the player entered an invalid command.
-                                                for (const action in choices) {
-                                                    if (a === 'fish') {
-                                                        checkAction( ( (prompt ('>')).toLowerCase() ) );
-                                                    }
-                                                    a === action ? aA++ : '';
+                                                console.log(                                                
+                                                    '\n',
+                                                    '\n',
+                                                    'Enter the #number of the fish you will throw back into the river.');
+                                                    let input = prompt('>');
+                                                    bucket.splice(Number(input - 1), 1);
+                                                    
+                                                    //Recursive function. The player will remove '1' fish, and then this code runs again
+                                                    //to ensure that the bucket is now within limits.
+                                                    return choices.thisThat({type:'N/A',value:0,weight:0})
                                                 }
                                                 
-                                                return (aA === 0) ? (checkAction( ( (prompt ('>')).toLowerCase() ) ) ): 
-                                                (aA > 0) ? (choices[a]() ):
-                                                '';
+                                                
+                                            }//End of choices
+                                            
+                                            //BEGINNING OF MAIN CODE
+                                            
+                                            
+                                            //Clear the player's input from the previous loop.
+                                            playerInput = '';
+                                            
+                                            //The program will check if we have a name for the player, if not it will prompt an input.
+                                            name === 'player' ? getName():'';
+                                            
+                                            
+                                            console.clear();
+                                            //This is the basic UI for the player.
+                                            console.log('          ~~~~~~~~~~ REEL OUT! ~~~~~~~~~');
+                                            console.log('          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                                            console.log( 
+                                                '\n',
+                                                'It is currently', time, 'and a gorgeous sunny day outside.',
+                                                '\n',
+                                                '\n',
+                                                'What would you like to do', name, '?',
+                                                '\n',
+                                                '\n',
+                                                'Commands -',
+                                                '\n',
+                                                ' -Cast your line into the river. [cast]',
+                                                '\n',
+                                                ' -Review your catch. [bucket]',
+                                                '\n',
+                                                '\n',
+                                                ' -Quit game. [quit]',
+                                                );
+                                                
+                                                
+                                                console.log('Type in a command...', '\n');
+                                                
+                                                //I want to use the player input, as the input to call a function. I needed to convert the input to lower case
+                                                //if the player inputs any capital letters.
+                                                checkAction(((prompt('>')).toLowerCase()));
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                //Late stage add here, had a crash if this input did not match one of the key:values of {choices}
+                                                function checkAction (a) {
+                                                    let aA = 0;
+                                                    
+                                                    //Go through each property in choices, if playerinput matches any of these, add 1 to aA. If aA is still at
+                                                    //value 0 when this loop is finished, it means that the player entered an invalid command.
+                                                    for (const action in choices) {
+                                                        // if (a === 'fish' || a === 'thisThat') {
+                                                        //     checkAction(((prompt('>')).toLowerCase()));
+                                                        // }
+                                                        a === action ? aA++ : '';
+                                                    }
+                                                    
+                                                    return (aA === 0) ? (checkAction(((prompt('>')).toLowerCase()))): 
+                                                    (aA > 0) ? (choices[a]() ):
+                                                    '';
+                                                }
+                                                
+                                                if (clock === 720) {
+                                                    running = 3;
+                                                }
+                                                
+                                                
+                                            }//End of main while loop
+                                            
+                                            
+                                            if (running === 3) {
+                                                console.clear();
+                                                console.log('It is noon and you are STARVING! Maybe that\'s enough fishing for the day.');
+                                                prompt('>');
+                                                
+                                                let sumFish = 0;
+                                                let sumWeight = 0;
+                                                let sumCash = 0;                                         
+                                                for (let i=0; i<bucket.length; i++) {
+                                                    sumFish++;
+                                                    sumWeight += Number(bucket[i].weight);
+                                                    sumCash += Number(bucket[i].value);
+                                                }
+                                                
+                                                console.log('You caught', sumFish, 'fish today, they weigh-in at', sumWeight, '.',
+                                                '\n',
+                                                'After some haggling, you sell the lot for $', sumCash, ', nice job!');
+                                                prompt('>');
+                                                running = 2;
                                             }
                                             
-                                        }//End of main while loop
-                                        
-                                        
-                                        
-                                        if (running = 2) {
-                                            console.clear();
-                                            console.log('Thanks for playing, see you next time!');
-                                        }
+                                            if (running === 2) {
+                                                console.clear();
+                                                console.log('Thanks for playing, see you next time!');
+                                            }
