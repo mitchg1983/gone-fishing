@@ -2,15 +2,15 @@
 //which will create the randomly generated fish. This 'part' of the project can exist entirely by
 //itself, so I think it's a good place to just get something going! I will now go make my first commit.
 
-console.log ('And so it begins.');
 
 //Our old friend prompt-sync
 const prompt = require('prompt-sync')();
 
 
 //list of colors
-const fishColors = ["red", "orange", "blue", "green", "brown", "yellow", "orange with blue stripes", "transluscent", "brown with red stripes", 
-"red with yellow stripes", "black", "green with brown spots", "brown with white spots", "white with red spots"];
+const fishColors = ["red", "orange", "blue", "green", "brown", "yellow", "orange & blue striped", 
+"transluscent", "brown & red striped", "red & yellow striped", "black", "green & brown spotted", 
+"brown & white spotted", "white & red spotted"];
 
 
 //list of physical attributes
@@ -28,30 +28,14 @@ let bucket = [];
 let onRod = [];
 let clock = 0;
 let time = '';
+let chum = 0;
+let name = 'player';
+let playerInput = '';
+
+//This value is my escape/exit from the program
+let running = 0;
 
 
-
-//-------------FUNCTIONS---------------//
-// function createFish () {
-
-//     //First we clear the rod, I might move this line to somewhere else in the program.
-//     onRod = [];
-//     const newFish = {
-//         color : random_item(fishColors),
-//         desc : random_item(fishDesc),
-//         type : random_item(fishType),
-
-//         //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
-//         value : randomCash(1),
-//         weight : randomWeight(1),
-//     }
-//     //This is a temporary storage place for the fish, while player makes a decision.
-//     onRod.push(newFish);
-//     return
-// }
-
-// createFish();
-// console.log('This is what we caught...', onRod);
 
 //This code I copied from a website, but it's so simple I did not think it would be an
 //issue if I used it. I don't think I have ever used an '_' in a function name.
@@ -171,87 +155,252 @@ function checkWatch () {
     return;
 }
 
+function getName () {
+    //We take in a custom value for the player's name.
+    console.log('What is your name?')
+    name = prompt ('>');
+    return
+}
+
+
+
 //
 //-------END OF FUNCTIONS---------//
 //
 
 //Opening splash screen for player.
-
-console.clear ();
-console.log('Welcome to',
-'\n',  '\n', '\n', '\n', 
-'   Reel Out: Big Bass American Fishing Challenge 2021 - the Terminal Edition',
-'\n', '\n', 
-'                       "Where any fin is possible"', 
-'\n', '\n', '\n',);
-console.log('Press ENTER to START!');
-prompt ('>');
-
-//We take in a custom value for the player's name.
-console.log('What is your name?')
-const name = prompt ('>');
 console.clear ();
 
-//Here we set the time to 0600.
-timeWarp(360);
-
-console.log('~~~~~~~ REEL OUT! ~~~~~~~',
-'\n',
-'\n',);
-console.log( 'It is currently', time);
-
-
-
-
-
-
-//I thought it would be interesting to try and store some of my functions inside of an object, and then call them
-//as needed. Not sure if this is easier/helpful, but I wanted to stay away from as many loops as possible.
-const choices = {
+console.log(
+    '                                Welcome to',
+    '\n',  '\n', '\n', '\n', 
+    '   Reel Out: Big Bass American Fishing Challenge 2021 - the Terminal Edition',
+    '\n', '\n', 
+    '                       "Where any fin is possible"', 
+    '\n', '\n', '\n',);
     
-
-    //Look inside the bucket, give sums to player
-    bucket: function () {
-        
-        //Starting values for this function
-        let sumFish = 0;
-        let sumWeight = 0;
-        let sumCash = 0;
-        
-        //Sum of fish
-        for (let i=0; i<bucket.length; i++) {
-            sumFish++;
-            sumWeight += Number(bucket[i].weight);
-            sumCash += Number(bucket[i].value);
-        }
-        
-        //Trivial case and output to player
-        return bucket.length === 0 ? console.log('Your bucket is empty, go catch some fish!') : 
-        console.log('\n', 'You currently have', sumFish.toString(), 'fish.', '\n',
-        'Your bucket weighs', sumWeight.toFixed(2),'lbs.', '\n',
-        'This haul is worth $', sumCash.toFixed(2), 'back in town.');
-    },
+    console.log('Press ENTER to START!');
+    prompt ('>');
     
-    //Create a new fish & place it on the player's fishing rod.
-    fish: function () {
+    //Setting this value to 1 will enter us into the main loop of the game.
+    running = 1;
     
-        //First we clear the rod, I might move this line to somewhere else in the program.
-        onRod = [];
-        const newFish = {
-            color : random_item(fishColors),
-            desc : random_item(fishDesc),
-            type : random_item(fishType),
+    //Here we set the time to 0600.
+    timeWarp(360);
+    
+    while (running === 1) {
+        
+        
+        //I thought it would be interesting to try and store some of my functions inside of an object, and then call them
+        //as needed. Not sure if this is easier/helpful, but I wanted to stay away from as many loops as possible.
+        //
+        //I could have put all functions in here, but I didn't want to spend the time to fix any bugs that might pop up.
+        const choices = {
             
-            //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
-            value : randomCash(1),
-            weight : randomWeight(1),
-        }
-        //This is a temporary storage place for the fish, while player makes a decision.
-        onRod.push(newFish);
-        return
-    }
+            quit: function () {
+                running + 1;
+                return
+            },
+            
+            //Look inside the bucket, give sums to player
+            bucket: function () {
+                
+                //***CLEAR CONSOLE***
+                console.clear();
+                
+                //Starting values for this function
+                let sumFish = 0;
+                let sumWeight = 0;
+                let sumCash = 0;
+                
+                //Sum of fish
+                for (let i=0; i<bucket.length; i++) {
+                    sumFish++;
+                    sumWeight += Number(bucket[i].weight);
+                    sumCash += Number(bucket[i].value);
+                }
+                
+                //Maintain some of the UI for the player, so they know they're still 'inside' the game.
+                console.log('          ~~~~~~~~~~ REEL OUT! ~~~~~~~~~');
+                console.log('          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                
+                //Trivial case inside a ternary statement
+                bucket.length === 0 ? 
+                
+                console.log(
+                    '\n', 
+                    'Your bucket is empty, go catch some fish!',
+                    '\n') : 
+                    
+                    //Other side of ternary statement
+                    console.log(
+                        '\n', 
+                        'You currently have', sumFish.toString(), 'fish.', 
+                        '\n',
+                        'Your bucket weighs', sumWeight.toFixed(2), 'lbs.', 
+                        '\n',
+                        'This haul is worth $', sumCash.toFixed(2), 'back in town.')
+                        ;
+                        
+                        //Since I am using console clears, and repetitive logs, to imitate a static UI here,
+                        //I must put these 'pauses' in the game, so the player has time to read the output.
+                        console.log('Press ENTER to continue...');
+                        prompt('>')
+                        ;
+                        
+                        return 
+                    },
+                    
+                    //Create a new fish & place it on the player's fishing rod.
+                    fish: function () {
+                        
+                        //***CONSOLE CLEAR***
+                        console.clear();
+                        
+                        console.log('          ~~~~~~~~~~ REEL OUT! ~~~~~~~~~');
+                        console.log('          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                        
+                        
+                        //First we clear the rod, I might move this line to somewhere else in the program.
+                        onRod = [];
+                        
+                        const newFish = {
+                            color : random_item(fishColors),
+                            desc : random_item(fishDesc),
+                            type : random_item(fishType),
+                            
+                            //'1' - temp values. I plan to input [newFish.type] in place of '1' for these 2 lines.
+                            value : randomCash(1),
+                            weight : randomWeight(1),
+                        }
+                        //This is a temporary storage place for the fish, while player makes a decision.
+                        onRod.push(newFish);
+                        console.log(
+                            '\n',    
+                            'You feel a bite and pull in your catch...',
+                            '\n',
+                            '   You caught a', newFish.color, newFish.type, ',', 'it looks', newFish.desc, 'and hangs from your hook.',
+                            '\n',
+                            '\n',
+                            'Would you like to keep the fish?',
+                            '\n',
+                            '\n',
+                            )
+                            
+                            let keep = prompt ('(Y/N) >')
+                            
+                            return (keep === 'N') ? onRod=[] : 
+                            (keep === 'Y') ? bucket.push(newFish) :
+                            ''
+                        },
+                        
+                        //The cast function will determine what happens to the player.
+                        cast: function () {
+                            
+                            //***CONSOLE CLEAR***
+                            console.clear();
+                            
+                            //Using a scale of 100 is easier to adjust/balance things.
+                            let a = Math.floor(Math.random()*100);
+                            
+                            //I chose to use chum as a bonus to the roll. Fish can be caught at a roll up to 110, so
+                            //chum essentially removes 10 'poor' outcomes and replaces them with 10 'good' outcomes.
+                            chum = 1 ? a + 10 : a=a;
+                            
+                            console.log('          ~~~~~~~~~~ REEL OUT! ~~~~~~~~~');
+                            console.log('          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                            console.log('\n');
+                            
+                            //Wanted to practice with ternary statements, and edit some of the code down. All the
+                            //'if' and 'else' statements sure take up a lot of space.
+                            
+                            return (a <= 20) ? prompt('You fished up some junk. It is not worth anything. Press ENTER to continue.') : choices.fish();
+                            
+                        },
+                        
+                        
+                        
+                        
+                    }//End of choices
+                    
+                    //BEGINNING OF MAIN CODE
+                    
+                    
+                    //Clear the player's input from the previous loop.
+                    playerInput = '';
+                    
+                    //The program will check if we have a name for the player, if not it will prompt an input.
+                    name === 'player' ? getName():'';
+                    
+                    
+                    console.clear();
+                    //This is the basic UI for the player.
+                    console.log('          ~~~~~~~~~~ REEL OUT! ~~~~~~~~~');
+                    console.log('          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                    console.log( 
+                        '\n',
+                        'It is currently', time, 'and a gorgeous sunny day outside.',
+                        '\n',
+                        '\n',
+                        'What would you like to do', name, '?',
+                        '\n',
+                        '\n',
+                        'Commands -',
+                        '\n',
+                        'Cast your line into the river. [cast]',
+                        '\n',
+                        'Review your catch. [bucket]',
+                        '\n',
+                        '\n',
+                        );
+                        
+                        
+                        console.log('Type in a command...', '\n');
+                        
+                        //I want to use the player input, as the input to call a function. I needed to convert the input to lower case
+                        //if the player inputs any capital letters.
+                        // playerInput = ( (prompt ('>')).toLowerCase() );
+                        checkAction( ( (prompt ('>')).toLowerCase() ) );
+                        
 
-}
-console.log(onRod);
-choices.fish();
-console.log(onRod);
+                        
+                        
+
+                        //Late stage add here, had a crash if this input did not match one of the key:values of {choices}
+                        function checkAction (a) {
+                            let aA = 0;
+                            
+                            //Go through each property in choices, if playerinput matches any of these, add 1 to aA. If aA is still at
+                            //value 0 when this loop is finished, it means that the player entered an invalid command.
+                            for (const action in choices) {
+                                if (a === 'fish') {
+                                    checkAction( ( (prompt ('>')).toLowerCase() ) );
+                                }
+                                a === action ? aA++ : '';
+                            }
+                            
+                            return (aA === 0) ? (checkAction( ( (prompt ('>')).toLowerCase() ) ) ): 
+                                   (aA > 0) ? (choices[a]() ):
+                                   (aA > 0) ? (checkAction( ( (prompt ('>')).toLowerCase() ) ) ):
+                                   '';
+                        }
+
+                    }//End of main while loop
+                    
+                    
+                    
+                    if (running = 2) {
+                        console.log('Thanks for playing, see you next time!');
+                    }
+                    
+                    
+                    // (playerInput === a) ? b++ : b=b;
+                    // b > 0 ? choices[playerInput]() : (playerInput = (prompt ('>')).toLowerCase());
+                    
+                    // for (const a in choices) {
+                    //     let b = 0;
+                    //     console.log(b);
+                    
+                    
+                    
+                    
